@@ -1,6 +1,6 @@
 import logging
 import time
-from . import _BASE_URL, NoDevice, NoValidMode, NoValidSystemMode, postRequest
+from . import _BASE_URL, NoConnection, NoDevice, NoValidMode, NoValidSystemMode, postRequest
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,11 @@ class VaillantData(object):
             "device_type": "NAVaillant",
         }
         resp = postRequest(_GETTHERMOSTATDATA_REQ, postParams)
-        if resp is None or resp['body'] is None:
+
+        if resp is None:
+            raise NoConnection("No response from Netatmo server")
+
+        if resp['body'] is None:
             raise NoDevice("No thermostat data returned by Netatmo server")
         self.rawData = resp['body']
 

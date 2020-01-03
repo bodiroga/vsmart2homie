@@ -3,6 +3,7 @@ import os
 import time
 import sys
 
+from pyvaillant import NoConnection, NoDevice
 from pyvaillant.client_auth import ClientAuth
 from pyvaillant.vaillant_data import VaillantData
 from vsmart_device import vSmartDevice
@@ -18,6 +19,7 @@ mqtt_settings = {
         "MQTT_PASSWORD": None,
         "MQTT_CLIENT_ID": "vsmart2homie"
     }
+
 
 if __name__ == "__main__":
     try:
@@ -39,25 +41,30 @@ if __name__ == "__main__":
         vaillant_connection = VaillantData(clientAuth)
 
         # Get data interval value
-        data_interval = int(os.environ.get("DATA_INTERVAL")) or 300
+        data_interval = int(os.environ.get("DATA_INTERVAL") or 300)
 
         system_name = "vSmart ({})".format(vaillant_connection.station_name)
         vsmart = vSmartDevice(device_id="vsmart", name=system_name, mqtt_settings=mqtt_settings, connection=vaillant_connection)
 
         while True:
-            vaillant_connection.update()
-            vsmart.get_node("thermostat").set_property_value("current-temp", vaillant_connection.current_temp)
-            vsmart.get_node("thermostat").set_property_value("setpoint-temp", vaillant_connection.setpoint_temp)
-            vsmart.get_node("thermostat").set_property_value("setpoint-mode", vaillant_connection.setpoint_mode)
-            vsmart.get_node("thermostat").set_property_value("system-mode", vaillant_connection.system_mode)
-            vsmart.get_node("thermostat").set_property_value("battery", vaillant_connection.battery)
+            try:
+                vaillant_connection.update()
+                vsmart.get_node("thermostat").set_property_value("current-temp", vaillant_connection.current_temp)
+                vsmart.get_node("thermostat").set_property_value("setpoint-temp", vaillant_connection.setpoint_temp)
+                vsmart.get_node("thermostat").set_property_value("setpoint-mode", vaillant_connection.setpoint_mode)
+                vsmart.get_node("thermostat").set_property_value("system-mode", vaillant_connection.system_mode)
+                vsmart.get_node("thermostat").set_property_value("battery", vaillant_connection.battery)
 
-            vsmart.get_node("outdoor").set_property_value("outdoor-temp", vaillant_connection.outdoor_temperature)
+                vsmart.get_node("outdoor").set_property_value("outdoor-temp", vaillant_connection.outdoor_temperature)
 
-            vsmart.get_node("boiler").set_property_value("ebus-error", vaillant_connection.ebus_error)
-            vsmart.get_node("boiler").set_property_value("boiler-error", vaillant_connection.boiler_error)
-            vsmart.get_node("boiler").set_property_value("maintenance-status", vaillant_connection.maintenance_status)
-            vsmart.get_node("boiler").set_property_value("refill-water", vaillant_connection.refill_water)
+                vsmart.get_node("boiler").set_property_value("ebus-error", vaillant_connection.ebus_error)
+                vsmart.get_node("boiler").set_property_value("boiler-error", vaillant_connection.boiler_error)
+                vsmart.get_node("boiler").set_property_value("maintenance-status", vaillant_connection.maintenance_status)
+                vsmart.get_node("boiler").set_property_value("refill-water", vaillant_connection.refill_water)
+            except NoConnection:
+                logger.error("No response from Netatmo server")
+            except NoDevice:
+                logger.error("No device data returned by Netatmo server")
 
             time.sleep(data_interval)
 

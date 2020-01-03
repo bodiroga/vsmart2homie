@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 # Common definitions
 _BASE_URL = "https://api.netatmo.com/"
 
+class NoConnection(Exception):
+    pass
 
 class NoDevice(Exception):
     pass
