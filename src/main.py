@@ -65,6 +65,8 @@ if __name__ == "__main__":
                 logger.error("No response from Netatmo server")
             except NoDevice:
                 logger.error("No device data returned by Netatmo server")
+            except Exception as e:
+                logger.error("Unhandled exception: {}".format(e))
 
             time.sleep(data_interval)
 

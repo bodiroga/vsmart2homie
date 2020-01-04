@@ -44,22 +44,20 @@ class VaillantData(object):
         if resp is None:
             raise NoConnection("No response from Netatmo server")
 
-        if resp['body'] is None:
+        self.rawData = resp.get('body')
+        if not self.rawData:
             raise NoDevice("No thermostat data returned by Netatmo server")
-        self.rawData = resp['body']
-
-        self.devList = self.rawData['devices']
+        
+        self.devList = self.rawData.get('devices')
         if not self.devList:
             raise NoDevice("No thermostat available")
         
-        if not self.rawData['devices'][0]['modules']:
-            raise NoDevice("No modules available")
-
-
         # Get station name
         self.station_name = self.devList[0]["station_name"]
 
-        self.modList = self.devList[0]['modules']
+        self.modList = self.devList[0].get('modules')
+        if not self.modList:
+            raise NoDevice("No modules available")
 
         # Get name, current temperature and setpoint temperature
         if 'module_name' in self.modList[0]:
