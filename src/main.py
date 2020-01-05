@@ -23,6 +23,8 @@ mqtt_settings = {
 
 if __name__ == "__main__":
     try:
+        logger.info("Starting vsmart2homie service...")
+
         # Get vSmart connection values
         client_id = os.environ.get("CLIENT_ID")
         client_secret = os.environ.get("CLIENT_SECRET")

@@ -30,13 +30,13 @@ class VaillantData(object):
         self.boiler_error = None            # Boiler Error
         self.maintenance_status = None      # Maintenance Status
         self.refill_water = None            # Refill Water
-        self.token = authData.accessToken   # Access Token
+        self.authData = authData            # Auth Data
         self.update()                       # Get latest data        
     
     def update(self):
         # Get latest data from server
         postParams = {
-            "access_token": self.token,
+            "access_token": self.authData.accessToken,
             "device_type": "NAVaillant",
         }
         resp = postRequest(_GETTHERMOSTATDATA_REQ, postParams)
@@ -114,7 +114,7 @@ class VaillantData(object):
         if setpointMode not in ["manual", "away", "hwb"]:
             raise NoValidMode("No valid setpoint mode: [{}]".format(setpointMode))
 
-        postParams = {"access_token": self.token}
+        postParams = {"access_token": self.authData.accessToken}
         postParams['device_id'] = deviceId if deviceId else self.devList[0]['_id']
         postParams['module_id'] = moduleId if moduleId else self.modList[0]['_id']            
         postParams['setpoint_mode'] = setpointMode            
@@ -142,7 +142,7 @@ class VaillantData(object):
         if setpointMode not in ["manual", "away", "hwb"]:
             raise NoValidMode("No valid setpoint mode: [{}]".format(setpointMode))
 
-        postParams = {"access_token": self.token}
+        postParams = {"access_token": self.authData.accessToken}
         postParams['device_id'] = deviceId if deviceId else self.devList[0]['_id']
         postParams['module_id'] = moduleId if moduleId else self.modList[0]['_id']
         postParams['setpoint_mode'] = setpointMode
@@ -158,7 +158,7 @@ class VaillantData(object):
         if systemMode not in ["winter", "summer", "frostguard"]:
             raise NoValidSystemMode("No valid system mode: [{}]".format(systemMode))
 
-        postParams = {"access_token": self.token}
+        postParams = {"access_token": self.authData.accessToken}
         postParams['device_id'] = deviceId if deviceId else self.devList[0]['_id']
         postParams['module_id'] = moduleId if moduleId else self.modList[0]['_id']
         postParams['system_mode'] = systemMode
