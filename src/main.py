@@ -59,10 +59,10 @@ if __name__ == "__main__":
 
                 vsmart.get_node("outdoor").set_property_value("outdoor-temp", vaillant_connection.outdoor_temperature)
 
-                vsmart.get_node("boiler").set_property_value("ebus-error", str(vaillant_connection.ebus_error).lower())
-                vsmart.get_node("boiler").set_property_value("boiler-error", str(vaillant_connection.boiler_error).lower())
-                vsmart.get_node("boiler").set_property_value("maintenance-status", str(vaillant_connection.maintenance_status).lower())
-                vsmart.get_node("boiler").set_property_value("refill-water", str(vaillant_connection.refill_water).lower())
+                vsmart.get_node("boiler").set_property_value("ebus-error", vaillant_connection.ebus_error)
+                vsmart.get_node("boiler").set_property_value("boiler-error", vaillant_connection.boiler_error)
+                vsmart.get_node("boiler").set_property_value("maintenance-status", vaillant_connection.maintenance_status)
+                vsmart.get_node("boiler").set_property_value("refill-water", vaillant_connection.refill_water)
             except NoConnection:
                 logger.error("No response from Netatmo server")
             except NoDevice:
